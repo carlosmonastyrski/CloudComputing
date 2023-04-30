@@ -1,0 +1,34 @@
+- hosts: server
+  become: true
+
+  tasks:
+  - name: Actualizar apt-get
+    apt:
+      update_cache: yes
+
+  - name: Instalar Apache
+    apt:
+      name: apache2
+      state: present
+
+  - name: Instalar PHP
+    apt:
+      name:
+        - libapache2-mod-php
+        - php
+        - php-cli
+        - php-mysql
+      state: present
+
+- hosts: db
+  become: true
+
+  tasks:
+  - name: Actualizar apt-get
+    apt:
+      update_cache: yes
+
+  - name: Instalar MySQL
+    apt:
+      name: mysql-server
+      state: present

@@ -1,0 +1,12 @@
+- name: Ping a la db
+  hosts: db
+  gather_facts: false
+  tasks:
+    - name: Realizar un ping a la db
+      ping:
+- name: Ping al server    
+  hosts: server
+  gather_facts: false
+  tasks:
+    - name: Realizar un ping al server    
+      ping:

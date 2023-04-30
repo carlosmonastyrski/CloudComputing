@@ -1,0 +1,102 @@
+- name: 'Deploy gcp vm'
+  hosts: localhost
+  connection: local
+  become: false
+  gather_facts: no
+
+  vars: 
+    gcp_project: agile-alignment-384815
+    zone: europe-west1-b
+    auth_kind: serviceaccount
+    image: ubuntu-20-04
+    gcp_region: europe-west1
+    service_account_file: ~/permisos
+    machine_type: n1-standard-1
+    network: default
+
+  # Roles & Tasks
+  tasks:
+
+  - name: create a disk
+    gcp_compute_disk:
+      name: disk-instance
+      size_gb: 50
+      source_image: projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts
+      zone: "{{ zone }}"
+      project: "{{ gcp_project }}"
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
+      state: present
+    register: disk
+
+  - name: create a address
+    gcp_compute_address:
+      name: address-instance
+      region: "{{ gcp_region }}"
+      project: "{{ gcp_project }}"
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
+      state: present
+    register: address
+
+  - name: create a address2
+    gcp_compute_address:
+      name: address-instance2
+      region: "{{ gcp_region }}"
+      project: "{{ gcp_project }}"
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
+      state: present
+    register: address2
+
+  - name: create a disk 2
+    gcp_compute_disk:
+      name: disk-instance2
+      size_gb: 50
+      source_image: projects/ubuntu-os-cloud/global/images/family/ubuntu-2004-lts
+      zone: "{{ zone }}"
+      project: "{{ gcp_project }}"
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
+      state: present
+    register: disk2
+
+  - name: create a instance
+    gcp_compute_instance:
+      name: instance1
+      machine_type: "{{ machine_type }}"
+      project: "{{ gcp_project }}"
+      zone: "{{ zone }}"
+      state: present
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
+      disks:
+      - auto_delete: 'true'
+        boot: 'true'
+        source: "{{ disk }}"
+      network_interfaces:
+      - network:
+        access_configs:
+        - name: external-nat
+          nat_ip: "{{ address }}"
+          type: ONE_TO_ONE_NAT
+
+  - name: create a instance
+    gcp_compute_instance:
+      name: instance2
+      machine_type: "{{ machine_type }}"
+      project: "{{ gcp_project }}"
+      zone: "{{ zone }}"
+      disks:
+      - auto_delete: 'true'
+        boot: 'true'
+        source: "{{ disk2 }}"
+      network_interfaces:
+      - network:
+        access_configs:
+        - name: external-nat
+          nat_ip: "{{ address2 }}"
+          type: ONE_TO_ONE_NAT
+      state: present
+      auth_kind: "{{ auth_kind }}"
+      service_account_file: "{{ service_account_file }}"
