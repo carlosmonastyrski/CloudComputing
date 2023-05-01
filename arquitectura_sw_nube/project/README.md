@@ -46,3 +46,7 @@ Para subir este proyecto, simplemente debemos ingresar a la web y realizar los s
 * Abrimos una terminal de sql, y copiamos el script de creación de la tabla.
 * Ya con esto modificamos el archivo .py con los datos de conexión de la base de datos creada
 * Por último refrescamos la app para que tome estos últimos cambios, y ya está nuestra API funcionando.
+
+# Mi Api
+
+http://carlosmonas.pythonanywhere.com/productos
